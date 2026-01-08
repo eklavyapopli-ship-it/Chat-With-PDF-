@@ -6,5 +6,8 @@ const worker = new Worker('file-upload-queue', async job => {
 }, { concurrency: 100 , connection:{
     host:'localhost',
     port:6379
+    
 }});
+
+
 

@@ -26,6 +26,7 @@ app.post('/upload/pdf', upload.single('pdf'),(req,res)=>{
     filename: req.file.originalname,
     destination: req.file.destination,
     path: req.file.path
+  
   }))
     return res.json({message:'uploaded'})
 })
