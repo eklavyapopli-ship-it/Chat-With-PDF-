@@ -4,6 +4,7 @@ import { QdrantClient } from "@qdrant/js-client-rest";
 import { QdrantVectorStore } from "@langchain/qdrant";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf"
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+const api = ""
 const worker = new Worker('file-upload-queue', async job => {
   console.log(`Job: `, job.data)
   const data = JSON.parse(job.data)
@@ -20,7 +21,7 @@ chunkOverlap:0
   const chunks = await textsplitter.splitDocuments(docs)
  const embedding_model = new GoogleGenerativeAIEmbeddings(
   {
-    apiKey:process.env.GEMINI_API_KEY,
+    apiKey:api,
   model: "gemini-embedding-001"
 }
  )

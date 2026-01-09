@@ -41,8 +41,8 @@ app.post('/upload/pdf', upload.single('pdf'),(req,res)=>{
   }))
     return res.json({message:'uploaded'})
 })
-app.get('/chat',async (req,res)=>{
-  const userQuery = "what are your all products?"
+app.get(`/chat`,async (req,res)=>{
+    const userQuery = req.query.message;
   const ai = new GoogleGenAI({apiKey:api});
    const embedding_model = new GoogleGenerativeAIEmbeddings(
   {
@@ -70,9 +70,7 @@ const response = await ai.models.generateContent({
     systemInstruction: SYSTEM_PROMPT
     }
   });
-  return res.json({message: response.text,
-    docs:result
-  })
+  return res.json({answer:response.text})
 })
 
 app.listen(8000,()=>console.log('server started on port 8000'))
