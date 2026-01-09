@@ -2,8 +2,13 @@ import express from 'express'
 import cors from 'cors'
 import multer from 'multer'
 import { Queue } from 'bullmq'
-
-
+import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import { QdrantClient } from "@qdrant/js-client-rest";
+import { QdrantVectorStore } from "@langchain/qdrant";
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf"
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+const api = ""
 const queue = new Queue('file-upload-queue',{
    connection:{
     host:'localhost',
@@ -36,4 +41,38 @@ app.post('/upload/pdf', upload.single('pdf'),(req,res)=>{
   }))
     return res.json({message:'uploaded'})
 })
+app.get('/chat',async (req,res)=>{
+  const userQuery = "what are your all products?"
+  const ai = new GoogleGenAI({apiKey:api});
+   const embedding_model = new GoogleGenerativeAIEmbeddings(
+  {
+    apiKey: api,
+  model: "gemini-embedding-001"
+}
+ )
+   const vector_store = await QdrantVectorStore.fromExistingCollection(
+ embedding_model,{
+    url:"http://localhost:6333",
+    collectionName: "company_js"}
+ )
+
+ const result = await  vector_store.similaritySearch(userQuery, 8);
+
+   const SYSTEM_PROMPT = `
+  You are helfull AI Assistant who answeres the user query based on the available context from PDF File.
+  Context:
+  ${JSON.stringify(result)}
+  `;
+const response = await ai.models.generateContent({
+    model: "gemini-2.0-flash",
+    contents: userQuery,
+    config:{
+    systemInstruction: SYSTEM_PROMPT
+    }
+  });
+  return res.json({message: response.text,
+    docs:result
+  })
+})
+
 app.listen(8000,()=>console.log('server started on port 8000'))
