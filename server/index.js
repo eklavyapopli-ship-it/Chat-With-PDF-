@@ -4,7 +4,13 @@ import multer from 'multer'
 import { Queue } from 'bullmq'
 
 
-const queue = new Queue('file-upload-queue')
+const queue = new Queue('file-upload-queue',{
+   connection:{
+    host:'localhost',
+    port:6379
+    
+}
+})
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
