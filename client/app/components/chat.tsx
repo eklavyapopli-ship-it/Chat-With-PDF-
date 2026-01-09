@@ -35,9 +35,9 @@ const ChatComponent: React.FC = () => {
 
   return (
     <div className="p-4">
-      <div>
+      <div className='w-150'>
         {messages.map((message, index) => (
-          <pre key={index}>{message.answer}</pre>
+          <div className='w-150' key={index}><pre className='w-80'>{message.answer}</pre></div>
         ))}
       </div>
       <div className="fixed bottom-4 w-100 flex gap-3">

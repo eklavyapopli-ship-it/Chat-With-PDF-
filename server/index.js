@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import * as dotenv from 'dotenv'; 
 import multer from 'multer'
 import { Queue } from 'bullmq'
 import { GoogleGenAI } from "@google/genai";
@@ -8,7 +9,9 @@ import { QdrantClient } from "@qdrant/js-client-rest";
 import { QdrantVectorStore } from "@langchain/qdrant";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf"
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
-const api = ""
+// For ES Modules
+dotenv.config();
+const api = process.env.GEMINI_API_KEY
 const queue = new Queue('file-upload-queue',{
    connection:{
     host:'localhost',
